@@ -25,7 +25,7 @@ file.train.x <- "train/X_train.txt"
 file.train.y <- "train/y_train.txt" 
 
 
-# Download data from COursera if file is missing and unzip it into the workdir.
+# Download data from Coursera if file is missing and unzip it into the workdir.
 DownloadDataIfMissing <- function(){
 
   # Filename to check.
@@ -103,6 +103,39 @@ MergeTablesToOne <- function(){
   message("Merged table size = ", data.size)
 }
 
+# Convert activity names from factors to text.
+SetDescriptiveActivityNames <- function(){
+  # Both class() are factors, but can't use <- because they are different factors
+  # and simple assignment will prduce error "invalid factor level, NA generated".
+  # So must cast both sides to char, assign and then cast back.
+  dataFiltered$activityType <<- as.character(dataFiltered$activityType)
+  
+  # Loop every activity and replace with its descrition.
+  for(i in 1:6)
+    dataFiltered$activityType[dataFiltered$activityType == i] <<- as.character(dt.activityLables$activityType[i])
+  
+  dataFiltered$activityType <<- as.factor(dataFiltered$activityType) # cast back.  
+}
+
+# Convert activity names from factors to text.
+SetDescriptiveLabels <- function(){
+  # gsub() replaces all instances of the pattern in each column name.
+  # http://www.cookbook-r.com/Manipulating_data/Renaming_columns_in_a_data_frame/
+  # From features.txt. There is probably a better way.
+  
+  names(dataFiltered) <<- gsub("Acc", "Accelerometer", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("Gyro", "Gyroscope", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("Mag", "Magnitude", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("^t", "Time", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("^f", "Frequency", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("tBody", "TimeBody", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("-mean()", "Mean", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("-std()", "STD", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("-freq()", "Frequency", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("angle", "Angle", names(dataFiltered), ignore.case = TRUE)
+  names(dataFiltered) <<- gsub("gravity", "Gravity", names(dataFiltered), ignore.case = TRUE)  
+}
+
 # -----------------------------------------------------------------------------
 # Run here. Order of execution MAY be important.
 # -----------------------------------------------------------------------------
@@ -125,17 +158,7 @@ MergeTablesToOne()
 dataFiltered  <- dataAll[,grepl("mean|std|subjectId|activityType", names(dataAll))]
 
 # 3.Uses descriptive activity names to name the activities in the data set.
-
-# Both class() are factors, but can't use <- because they are different factors
-# and simple assignment will prduce error "invalid factor level, NA generated".
-# So must cast both sides to char, assign and then cast back.
-dataFiltered$activityType <- as.character(dataFiltered$activityType)
-
-# Loop every activity and replace with its descrition.
-for(i in 1:6)
-  dataFiltered$activityType[dataFiltered$activityType == i] <- as.character(dt.activityLables$activityType[i])
-
-dataFiltered$activityType <- as.factor(dataFiltered$activityType) # cast back.
+SetDescriptiveActivityNames()
 
 # Can now remove original tables and save some memory.
 rm(dt.activityLables, dt.features)
@@ -144,22 +167,7 @@ rm(dt.train.x, dt.train.y, dt.subject.train)
 rm(dt.merged.subject, dt.merged.x, dt.merged.y)
 
 #4. Appropriately labels the data set with descriptive variable names
-# gsub() replaces all instances of the pattern in each column name.
-# http://www.cookbook-r.com/Manipulating_data/Renaming_columns_in_a_data_frame/
-# From features.txt. There is probably a better way.
-
-names(dataFiltered) <- gsub("Acc", "Accelerometer", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("Gyro", "Gyroscope", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("Mag", "Magnitude", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("^t", "Time", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("^f", "Frequency", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("tBody", "TimeBody", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("-mean()", "Mean", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("-std()", "STD", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("-freq()", "Frequency", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("angle", "Angle", names(dataFiltered), ignore.case = TRUE)
-names(dataFiltered) <- gsub("gravity", "Gravity", names(dataFiltered), ignore.case = TRUE)
-
+SetDescriptiveLabels()
 
 # 5.From the data set in step 4, creates a second, independent tidy data set 
 # with the average of each variable for each activity and each subject.
