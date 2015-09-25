@@ -1,3 +1,5 @@
+library(reshape2)
+
 # Clena workspace.
 rm(list=ls())
 
@@ -80,9 +82,9 @@ AssignNamesToDt <- function(){
   colnames(dt.train.x) <<- dt.features[,2]
   colnames(dt.test.x) <<- dt.features[,2];
   
-  # TODo: Assign Y names. activity label.
-  #colnames(dt.train.y) <<- "activityType";
-  #colnames(dt.test.y) <<- "activityType";
+  # Assign Y names. activity label.
+  colnames(dt.train.y) <<- "activityType";
+  colnames(dt.test.y) <<- "activityType";
 }
 
 # Merge all sets to a single table.
@@ -119,12 +121,34 @@ AssignNamesToDt()
 MergeTablesToOne()
 
 # Can now remove original tables and save some memory.
-rm(dt.activityLables, dt.features)
+#rm(dt.activityLables, dt.features)
 rm(dt.test.x, dt.test.y, dt.subject.test)
 rm(dt.train.x, dt.train.y, dt.subject.train)
 rm(dt.merged.subject, dt.merged.x, dt.merged.y)
 
 # 2.Extracts only the measurements on the mean and standard deviation for 
-# each measurement. Id's are also removed.
-dataFiltered  <- dataAll[,grepl("mean|std", names(dataAll))] # Only 79 rows now.
+# each measurement. Id's must stay.
+dataFiltered  <- dataAll[,grepl("mean|std|subjectId|activityType", names(dataAll))]
+
+# 3.Uses descriptive activity names to name the activities in the data set.
+#dt.activityLables$V1
+
+#4. Appropriately labels the data set with descriptive variable names
+# gsub() replaces all instances of the pattern in each column name.
+# http://www.cookbook-r.com/Manipulating_data/Renaming_columns_in_a_data_frame/
+# From features.txt. There is probably a better way.
+
+names(dataFiltered) <- gsub("Acc", "Accelerometer", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("Gyro", "Gyroscope", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("Mag", "Magnitude", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("^t", "Time", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("^f", "Frequency", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("tBody", "TimeBody", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("-mean()", "Mean", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("-std()", "STD", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("-freq()", "Frequency", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("angle", "Angle", names(dataFiltered), ignore.case = TRUE)
+names(dataFiltered) <- gsub("gravity", "Gravity", names(dataFiltered), ignore.case = TRUE)
+
+
 
