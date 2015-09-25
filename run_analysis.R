@@ -161,3 +161,10 @@ names(dataFiltered) <- gsub("angle", "Angle", names(dataFiltered), ignore.case =
 names(dataFiltered) <- gsub("gravity", "Gravity", names(dataFiltered), ignore.case = TRUE)
 
 
+# 5.From the data set in step 4, creates a second, independent tidy data set 
+# with the average of each variable for each activity and each subject.
+
+dataFiltered$subjectId <- as.factor(dataFiltered$subjectId)
+tidyData <- aggregate(. ~subjectId + activityType, dataFiltered, mean)
+
+write.table(tidyData, file = "tidydata.txt", row.names = FALSE)
