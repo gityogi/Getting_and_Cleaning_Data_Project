@@ -1,6 +1,6 @@
 library(reshape2)
 
-# Clena workspace.
+# Clean workspace.
 rm(list=ls())
 
 # Set dir.
@@ -9,6 +9,7 @@ setwd("~/R Projects/Coursera/3 - Getting and Cleaning Data/Getting and Cleaning 
 # Files and folders.
 dataDir <- "UCI HAR Dataset"
 
+# TODO: should not have used . in var names. Breaks code style.
 # Main dir.
 file.activity_labels <- "activity_labels.txt"
 file.features <- "features.txt"
@@ -90,7 +91,7 @@ AssignNamesToDt <- function(){
 # Merge all sets to a single table.
 MergeTablesToOne <- function(){
   # 1.Merges the training and the test sets to create one data set.
-  dt.merged.subject <<- rbind(dt.subject.test, dt.subject.train)
+  dt.merged.subject <<- rbind(dt.subject.test, dt.subject.train) # TODO: can be local.
   dt.merged.x <<- rbind(dt.train.x, dt.test.x)
   dt.merged.y <<- rbind(dt.train.y, dt.test.y) 
   
@@ -117,7 +118,7 @@ SetDescriptiveActivityNames <- function(){
   dataFiltered$activityType <<- as.factor(dataFiltered$activityType) # cast back.  
 }
 
-# Convert activity names from factors to text.
+# Appropriately labels the data set with descriptive variable names.
 SetDescriptiveLabels <- function(){
   # gsub() replaces all instances of the pattern in each column name.
   # http://www.cookbook-r.com/Manipulating_data/Renaming_columns_in_a_data_frame/
@@ -166,7 +167,7 @@ rm(dt.test.x, dt.test.y, dt.subject.test)
 rm(dt.train.x, dt.train.y, dt.subject.train)
 rm(dt.merged.subject, dt.merged.x, dt.merged.y)
 
-#4. Appropriately labels the data set with descriptive variable names
+#4. Appropriately labels the data set with descriptive variable names.
 SetDescriptiveLabels()
 
 # 5.From the data set in step 4, creates a second, independent tidy data set 

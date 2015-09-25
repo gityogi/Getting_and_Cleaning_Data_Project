@@ -51,7 +51,7 @@ ActivityType as factor of:
 - Frequency
 - TimeBody
 - Mean
-- STD
+- STD (standard deviation)
 - Frequency
 - Angle
 - Gravity
