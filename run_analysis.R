@@ -120,18 +120,28 @@ AssignNamesToDt()
 # 1.Merges the training and the test sets to create one data set.
 MergeTablesToOne()
 
-# Can now remove original tables and save some memory.
-#rm(dt.activityLables, dt.features)
-rm(dt.test.x, dt.test.y, dt.subject.test)
-rm(dt.train.x, dt.train.y, dt.subject.train)
-rm(dt.merged.subject, dt.merged.x, dt.merged.y)
-
 # 2.Extracts only the measurements on the mean and standard deviation for 
 # each measurement. Id's must stay.
 dataFiltered  <- dataAll[,grepl("mean|std|subjectId|activityType", names(dataAll))]
 
 # 3.Uses descriptive activity names to name the activities in the data set.
-#dt.activityLables$V1
+
+# Both class() are factors, but can't use <- because they are different factors
+# and simple assignment will prduce error "invalid factor level, NA generated".
+# So must cast both sides to char, assign and then cast back.
+dataFiltered$activityType <- as.character(dataFiltered$activityType)
+
+# Loop every activity and replace with its descrition.
+for(i in 1:6)
+  dataFiltered$activityType[dataFiltered$activityType == i] <- as.character(dt.activityLables$activityType[i])
+
+dataFiltered$activityType <- as.factor(dataFiltered$activityType) # cast back.
+
+# Can now remove original tables and save some memory.
+rm(dt.activityLables, dt.features)
+rm(dt.test.x, dt.test.y, dt.subject.test)
+rm(dt.train.x, dt.train.y, dt.subject.train)
+rm(dt.merged.subject, dt.merged.x, dt.merged.y)
 
 #4. Appropriately labels the data set with descriptive variable names
 # gsub() replaces all instances of the pattern in each column name.
@@ -149,6 +159,5 @@ names(dataFiltered) <- gsub("-std()", "STD", names(dataFiltered), ignore.case = 
 names(dataFiltered) <- gsub("-freq()", "Frequency", names(dataFiltered), ignore.case = TRUE)
 names(dataFiltered) <- gsub("angle", "Angle", names(dataFiltered), ignore.case = TRUE)
 names(dataFiltered) <- gsub("gravity", "Gravity", names(dataFiltered), ignore.case = TRUE)
-
 
 
