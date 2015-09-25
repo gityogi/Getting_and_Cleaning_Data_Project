@@ -81,8 +81,7 @@ AssignNamesToDt <- function(){
   colnames(dt.test.x) <<- dt.features[,2];
 }
 
-
-# Run here.
+# Run here. Order of execution MAY be important,
 DownloadDataIfMissing()
 LoadFilesToDt() # Now everithing is in global.
 
@@ -95,4 +94,10 @@ dt.merged.subject <- rbind(dt.subject.test, dt.subject.train)
 dt.merged.x <- rbind(dt.train.x, dt.test.x)
 dt.merged.y <- rbind(dt.train.y, dt.test.y) 
 
+# Merge all datasets by rows. 
+data <- cbind(dt.merged.subject, dt.merged.y, dt.merged.x) 
 
+# For private use.
+data.size <- object.size(data)                 
+data.size <- format(data.size, quote = FALSE, units = "MB") # Appr. 42Mb.
+message("Merged table size = ", data.size)
