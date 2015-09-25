@@ -67,15 +67,32 @@ LoadFilesToDt <- function(){
 }
 
 # Assign names to dt's according to files.
-SetNamesToDt <- function(){
+AssignNamesToDt <- function(){
+  # Links the class labels with their activity name.
+  colnames(dt.activityLables) <<- c('activityId','activityType');
   
+  # the subject who performed the activity for each window sample. 
+  # Its range is from 1 to 30.
+  colnames(dt.subject.train) <<- "subjectId";
+  colnames(dt.subject.test) <<- "subjectId";
   
+  # Feaures.
+  colnames(dt.train.x) <<- dt.features[,2]
+  colnames(dt.test.x) <<- dt.features[,2];
 }
+
+
 # Run here.
 DownloadDataIfMissing()
 LoadFilesToDt() # Now everithing is in global.
 
+# 3.Uses descriptive activity names to name the activities in the data set.
+# Names are following during the merge @ 1.
+AssignNamesToDt() # New names.
+
 # 1.Merges the training and the test sets to create one data set.
+dt.merged.subject <- rbind(dt.subject.test, dt.subject.train)
 dt.merged.x <- rbind(dt.train.x, dt.test.x)
+dt.merged.y <- rbind(dt.train.y, dt.test.y) 
 
 
