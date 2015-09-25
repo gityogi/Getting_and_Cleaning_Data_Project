@@ -52,22 +52,30 @@ LoadFilesToDt <- function(){
   # Load all data.
   
   # Main dir.
-  dt.activityLables <<- read.table(file.path(dataDir, file.activity_labels)) 
-  dt.features <<- read.table(file.path(dataDir, file.features))  
+  dt.activityLables <<- read.table(file.path(dataDir, file.activity_labels), header=FALSE) 
+  dt.features <<- read.table(file.path(dataDir, file.features), header=FALSE)  
   
   # Test dir.
-  dt.test.x <<- read.table(file.path(dataDir, file.test.x))  
-  dt.test.y <<- read.table(file.path(dataDir, file.test.y))
-  dt.subject.test <<- read.table(file.path(dataDir, file.test.subject))
+  dt.test.x <<- read.table(file.path(dataDir, file.test.x), header=FALSE)  
+  dt.test.y <<- read.table(file.path(dataDir, file.test.y), header=FALSE)
+  dt.subject.test <<- read.table(file.path(dataDir, file.test.subject), header=FALSE)
   
   # Train dir.
-  dt.train.x <<- read.table(file.path(dataDir, file.train.x)) 
-  dt.train.y <<- read.table(file.path(dataDir, file.train.y)) 
-  dt.subject.train <<- read.table(file.path(dataDir, file.train.subject)) 
+  dt.train.x <<- read.table(file.path(dataDir, file.train.x), header=FALSE) 
+  dt.train.y <<- read.table(file.path(dataDir, file.train.y), header=FALSE) 
+  dt.subject.train <<- read.table(file.path(dataDir, file.train.subject), header=FALSE) 
 }
 
+# Assign names to dt's according to files.
+SetNamesToDt <- function(){
+  
+  
+}
 # Run here.
 DownloadDataIfMissing()
-LoadFilesToDt()
+LoadFilesToDt() # Now everithing is in global.
+
+# 1.Merges the training and the test sets to create one data set.
+dt.merged.x <- rbind(dt.train.x, dt.test.x)
 
 
