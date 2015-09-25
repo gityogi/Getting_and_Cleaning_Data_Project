@@ -79,25 +79,50 @@ AssignNamesToDt <- function(){
   # Feaures.
   colnames(dt.train.x) <<- dt.features[,2]
   colnames(dt.test.x) <<- dt.features[,2];
+  
+  # TODO: assign Y names.
 }
 
-# Run here. Order of execution MAY be important,
+# Merge all sets to a single table.
+MergeTablesToOne <- function(){
+  # 1.Merges the training and the test sets to create one data set.
+  dt.merged.subject <- rbind(dt.subject.test, dt.subject.train)
+  dt.merged.x <- rbind(dt.train.x, dt.test.x)
+  dt.merged.y <- rbind(dt.train.y, dt.test.y) 
+  
+  # Merge all datasets by rows. 
+  data <- cbind(dt.merged.subject, dt.merged.y, dt.merged.x) 
+  
+  # For private use.
+  data.size <- object.size(data)                 
+  data.size <- format(data.size, quote = FALSE, units = "MB") # Appr. 42Mb.
+  message("Merged table size = ", data.size)
+}
+
+# -----------------------------------------------------------------------------
+# Run here. Order of execution MAY be important.
+# -----------------------------------------------------------------------------
+
+# Download the set into current workdir.
 DownloadDataIfMissing()
-LoadFilesToDt() # Now everithing is in global.
+
+# Load data into the GLOBAL tables.
+LoadFilesToDt()
 
 # 3.Uses descriptive activity names to name the activities in the data set.
 # Names are following during the merge @ 1.
-AssignNamesToDt() # New names.
+AssignNamesToDt()
 
 # 1.Merges the training and the test sets to create one data set.
-dt.merged.subject <- rbind(dt.subject.test, dt.subject.train)
-dt.merged.x <- rbind(dt.train.x, dt.test.x)
-dt.merged.y <- rbind(dt.train.y, dt.test.y) 
+MergeTablesToOne()
 
-# Merge all datasets by rows. 
-data <- cbind(dt.merged.subject, dt.merged.y, dt.merged.x) 
+# Can now remove original tables and save some memory.
+rm(dt.activityLables, dt.features)
+rm(dt.test.x, dt.test.y, dt.subject.test)
+rm(dt.train.x, dt.train.y, dt.subject.train)
+rm(dt.merged.subject, dt.merged.x, dt.merged.y)
 
-# For private use.
-data.size <- object.size(data)                 
-data.size <- format(data.size, quote = FALSE, units = "MB") # Appr. 42Mb.
-message("Merged table size = ", data.size)
+# 2.Extracts only the measurements on the mean and standard deviation for 
+# each measurement. Id's are also removed.
+dataFiltered  <- data[,grepl("mean|std", names(data))] # Only 79 rows now.
+
