@@ -46,27 +46,28 @@ DownloadDataIfMissing <- function(){
   }
 }
 
-# Main analyse function, run it.
-analyse <- function(){
+# Load files to global tables using the special assignment operator '<<-'.
+LoadFilesToDt <- function(){
 
   # Load all data.
   
   # Main dir.
-  dt.activityLables<-read.table(file.path(dataDir, file.activity_labels)) 
-  dt.features<-read.table(file.path(dataDir, file.features))  
+  dt.activityLables <<- read.table(file.path(dataDir, file.activity_labels)) 
+  dt.features <<- read.table(file.path(dataDir, file.features))  
   
   # Test dir.
-  dt.test.x<-read.table(file.path(dataDir, file.test.x))  
-  dt.test.y<-read.table(file.path(dataDir, file.test.y))
-  dt.subject.test<-read.table(file.path(dataDir, file.test.subject))
+  dt.test.x <<- read.table(file.path(dataDir, file.test.x))  
+  dt.test.y <<- read.table(file.path(dataDir, file.test.y))
+  dt.subject.test <<- read.table(file.path(dataDir, file.test.subject))
   
   # Train dir.
-  dt.train.x<-read.table(file.path(dataDir, file.train.x)) 
-  dt.train.y<-read.table(file.path(dataDir, file.train.y)) 
-  dt.subject.train<-read.table(file.path(dataDir, file.train.subject)) 
- 
-
+  dt.train.x <<- read.table(file.path(dataDir, file.train.x)) 
+  dt.train.y <<- read.table(file.path(dataDir, file.train.y)) 
+  dt.subject.train <<- read.table(file.path(dataDir, file.train.subject)) 
 }
 
 # Run here.
 DownloadDataIfMissing()
+LoadFilesToDt()
+
+
